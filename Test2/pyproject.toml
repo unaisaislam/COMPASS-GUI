@@ -1,0 +1,5 @@
+[project]
+name = "GUI Project"
+
+[tool.pyside6-project]
+files = ["MainWindow.qml", "qml/layouts/BottomLayout.qml", "qml/layouts/TopLayout.qml", "mainwindow.py", "mcp/checkbox_model.py", "widgets/ImageFilterWidget.qml", "widgets/ImageView.qml", "widgets/WelcomeWidget.qml", "mcp/controller.py","mcp/image_provider.py", "mcp/rGO.jpeg"]
