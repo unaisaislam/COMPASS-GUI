@@ -50,8 +50,8 @@ Item {
             id: btnRun
             text: "RUN"
             onClicked: {
-                imageProcessor.export
-                console.log("Run Clicked")
+                mainController.export()
+                console.log("PDF Exported")
             }
         }
     }
@@ -72,4 +72,3 @@ Item {
         }
     }
 }
-
