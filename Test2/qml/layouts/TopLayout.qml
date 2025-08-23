@@ -50,7 +50,7 @@ Item {
             id: btnRun
             text: "RUN"
             onClicked: {
-                // imageProcessor.savepdffunction
+                imageProcessor.export
                 console.log("Run Clicked")
             }
         }
@@ -72,3 +72,4 @@ Item {
         }
     }
 }
+
