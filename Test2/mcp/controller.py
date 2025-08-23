@@ -176,7 +176,7 @@ class MainController(QObject):
     @pyqtSlot()
     def export(self): #combine these with functions, store graph as different variable
         """Retrieve changes made by the user and apply to image/graph."""
-        with PdfPages(f"{self.image_path} figures.pdf") as pdf: 
+        with PdfPages(f"{self.image_processor.image_path} figures.pdf") as pdf: 
             function_applied = False
             for val in self.imgFunctionModel.list_data:
                 # Binarize
@@ -561,3 +561,6 @@ class MainController(QObject):
                 # if val["id"] == 15 and val.get("value,0") ==1:
                 #     function_applied = True
                 #     self.image_processor.node_rad()
+
+            if not function_applied:
+                self.export()
