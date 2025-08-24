@@ -50,7 +50,7 @@ class ImageProcessor(QObject):
         plt.imshow(binary, cmap="gray")
         plt.axis("off")
         plt.title("Binary Image")
-        plt.show()
+        # plt.show()
         
     @pyqtSlot()
     def skeletonize(self):
@@ -65,7 +65,7 @@ class ImageProcessor(QObject):
         plt.imshow(skeleton, cmap='gray')
         plt.axis('off')
         plt.title('Skeletonized Image')
-        plt.show()
+        # plt.show()
 
     @pyqtSlot()
     def extractgraph(self):
@@ -124,7 +124,7 @@ class ImageProcessor(QObject):
 
         plt.title('Colored Component Graph')
         plt.axis('off')
-        plt.show()
+        # plt.show()
 
     # number of nodes
     @pyqtSlot()
@@ -142,7 +142,11 @@ class ImageProcessor(QObject):
                         [1, 1, 1]])
         neighbor_counts = convolve(skeleton.astype(int), kernel, mode='constant', cval=0)
         nodes = np.logical_and(skeleton, neighbor_counts == 1)
-        print(f"Endpoints: {np.sum(nodes)}")
+        plt.figure()
+        plt.title('Nodes')
+        plt.axis('off')
+        plt.text(0.5, 0.5, str(np.sum(nodes)), ha='center', va='center', size=24) 
+        # print(f"Endpoints: {np.sum(nodes)}")
         
     # number of edges
     @pyqtSlot()
@@ -160,7 +164,12 @@ class ImageProcessor(QObject):
                         [1, 1, 1]])
         neighbor_counts = convolve(skeleton.astype(int), kernel, mode='constant', cval=0)
         edges = np.logical_and(skeleton, neighbor_counts >= 3)
-        print(f"Endpoints: {np.sum(edges)}")
+        plt.figure()
+        plt.title('Nodes')
+        plt.axis('off')
+        plt.text(0.5, 0.5, str(np.sum(edges)), ha='center', va='center', size=24) 
+        # print(f"Endpoints: {np.sum(edges)}")
+
 
     #edge-node graph
     @pyqtSlot()
@@ -228,7 +237,9 @@ class ImageProcessor(QObject):
             ax.scatter(x, y, color='red', s=20)
 
         plt.tight_layout()
-        plt.show()
+        plt.title('Edge-Node Skeleton Graph')
+        plt.axis('off')
+        # plt.show()
         
     # graph density
     @pyqtSlot()
@@ -272,7 +283,12 @@ class ImageProcessor(QObject):
                     graph.add_edge(u, v)
 
         graph_density = networkx.density(graph)
-        print(f"Graph Density: {graph_density:.4f}")
+        
+        plt.figure()
+        plt.title('Graph Density')
+        plt.axis('off')
+        plt.text(0.5, 0.5, str(graph_density), ha='center', va='center', size=24) 
+        # print(f"Graph Density: {graph_density:.4f}")
         
     # average degree
     @pyqtSlot()
@@ -317,7 +333,12 @@ class ImageProcessor(QObject):
                     
         deglist = [d for _, d in graph.degree()]
         avdeg = sum(deglist)/len(deglist) if deglist else 0
-        print(f"Average Degree: {avdeg:.4f}")
+        
+        plt.figure()
+        plt.title('Average Degree')
+        plt.axis('off')
+        plt.text(0.5, 0.5, str(avdeg), ha='center', va='center', size=24) 
+        # print(f"Average Degree: {avdeg:.4f}")
         
     # degree heatmap
     @pyqtSlot()
@@ -368,7 +389,7 @@ class ImageProcessor(QObject):
         plt.colorbar(label='Pixel Degree')
         plt.title('Degree Heatmap')
         plt.axis('off')
-        plt.show()
+        # plt.show()
         
     # betweeness centrality heatmap
     @pyqtSlot()
@@ -421,7 +442,7 @@ class ImageProcessor(QObject):
         plt.colorbar(label='Betweenness Centrality')
         plt.title('Betweenness Centrality Heatmap')
         plt.axis('off')
-        plt.show()
+        # plt.show()
 
     # edge length and width csv
     @pyqtSlot()
@@ -517,8 +538,8 @@ class ImageProcessor(QObject):
             })
 
         edges_df = pd.DataFrame(records)
-        edges_df.to_csv(self.output_csv, index=False, float_format="%.2f")
-        print(f"Saved edge list to {self.output_csv}.")
+        # edges_df.to_csv(self.output_csv, index=False, float_format="%.2f")
+        # print(f"Saved edge list to {self.output_csv}.")
         
 
     # # export to pdf
@@ -760,8 +781,8 @@ class ImageProcessor(QObject):
             })
 
         nodes_df = pd.DataFrame(records)
-        nodes_df.to_csv(self.output_csv, index=False, float_format="%.2f")
-        print(f"Saved node radius map to {self.output_csv}.")
+        # nodes_df.to_csv(self.output_csv, index=False, float_format="%.2f")
+        # print(f"Saved node radius map to {self.output_csv}.")
         
         
     # @pyqtSlot()
