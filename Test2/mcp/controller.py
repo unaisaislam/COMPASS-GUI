@@ -45,8 +45,8 @@ class MainController(QObject):
             {"id":9, "text": "To PDF: Edge-Node Skeleton Graph", "value":0},
             {"id":10, "text": "To PDF: Graph Density", "value":0},
             {"id":11, "text": "To PDF: Average Degree", "value":0},
-            {"id":12, "text": "To PDF: Degree Histogram", "value":0},
-            {"id":13, "text": "To PDF: Betweenness Centrality Histogram", "value":0},
+            {"id":12, "text": "To PDF: Degree Heatmap", "value":0},
+            {"id":13, "text": "To PDF: Betweenness Centrality Heatmap", "value":0},
             {"id": 14, "text": "CSV: Edge Lengths and Widths", "value":0},
             {"id": 15, "text": "CSV: Node Radii", "value":0}
             ]
@@ -182,62 +182,62 @@ class MainController(QObject):
                 # Binarize
                 if val["id"] == 4 and val.get("value,0") ==1:
                     function_applied = True
-                    self.process_image.binarize()
+                    self.image_processor.binarize()
                     pdf.savefig()
                     plt.close()
                 # Skeletonize
                 if val["id"] == 5 and val.get("value,0") ==1:
                     function_applied = True
-                    self.process_image.skeletonize()
+                    self.image_processor.skeletonize()
                     pdf.savefig()
                     plt.close()
                     
                 # Extract Graph
                 if val["id"] == 6 and val.get("value,0") ==1:
                     function_applied = True
-                    self.process_image.extractgraph()
+                    self.image_processor.extractgraph()
                     pdf.savefig()
                     plt.close()
                 # Nodes
                 if val["id"] == 7 and val.get("value,0") ==1:
                     function_applied = True
-                    self.process_image.nodes()
+                    self.image_processor.nodes()
                     pdf.savefig()
                     plt.close() 
                 # Edges
                 if val["id"] == 8 and val.get("value,0") ==1:
                     function_applied = True
-                    self.process_image.edges()
+                    self.image_processor.edges()
                     pdf.savefig()
                     plt.close() 
                 # Edge-Node Graph
                 if val["id"] == 9 and val.get("value,0") ==1:
                     function_applied = True
-                    self.process_image.en_graph()
+                    self.image_processor.en_graph()
                     pdf.savefig()
                     plt.close()
                 # Graph Density
                 if val["id"] == 10 and val.get("value,0") ==1:
                     function_applied = True
-                    self.process_image.graphdens()
+                    self.image_processor.graphdens()
                     pdf.savefig()
                     plt.close() 
                 # Average Degree
                 if val["id"] == 11 and val.get("value,0") ==1:
                     function_applied = True
-                    self.process_image.avdeg()
+                    self.image_processor.avdeg()
                     pdf.savefig()
                     plt.close() 
                 # Degree Heatmap
                 if val["id"] == 12 and val.get("value,0") ==1:
                     function_applied = True
-                    self.process_image.deg_hm()
+                    self.image_processor.deg_hm()
                     pdf.savefig()
                     plt.close()
                 # Betweenness Centrality Heatmap
                 if val["id"] == 13 and val.get("value,0") ==1:
                     function_applied = True
-                    self.process_image.bc_hm()
+                    self.image_processor.bc_hm()
                     pdf.savefig()
                     plt.close()
                 # # Edge Lengths and Widths CSV
