@@ -538,8 +538,8 @@ class ImageProcessor(QObject):
             })
 
         edges_df = pd.DataFrame(records)
-        # edges_df.to_csv(self.output_csv, index=False, float_format="%.2f")
-        # print(f"Saved edge list to {self.output_csv}.")
+        edges_df.to_csv(self.output_csv, index=False, float_format="%.2f")
+        print(f"Saved edge list to {self.output_csv}.")
         
 
     # # export to pdf
@@ -781,8 +781,8 @@ class ImageProcessor(QObject):
             })
 
         nodes_df = pd.DataFrame(records)
-        # nodes_df.to_csv(self.output_csv, index=False, float_format="%.2f")
-        # print(f"Saved node radius map to {self.output_csv}.")
+        nodes_df.to_csv(self.output_csv, index=False, float_format="%.2f")
+        print(f"Saved node radius map to {self.output_csv}.")
         
         
     # @pyqtSlot()
