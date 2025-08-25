@@ -27,6 +27,7 @@ class MainApp(QObject):
         self.ui_engine.rootContext().setContextProperty("imgFilterModel", controller.imgFilterModel)
         self.ui_engine.addImageProvider("imageProvider", self.image_provider)
         self.ui_engine.rootContext().setContextProperty("imageProcessor", self.image_processors)
+        self.ui_engine.rootContext().setContextProperty("imgFunctionModel", self.image_processors.imgFunctionModel)
 
         # Load UI
         # Get the directory of the current script
@@ -44,3 +45,4 @@ if __name__ == "__main__":
     # Start GUI app
     py_app = MainApp()
     sys.exit(py_app.app.exec())
+
