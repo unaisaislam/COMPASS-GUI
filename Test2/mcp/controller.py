@@ -177,7 +177,7 @@ class MainController(QObject):
     @pyqtSlot()
     def export(self): 
         """Retrieve changes made by the user and apply to image/graph."""
-        with PdfPages("figures.pdf") as pdf: 
+        with PdfPages(f"{self.image_processor.image_path}figures.pdf") as pdf: 
             function_applied = False
             for val in self.image_processor.imgFunctionModel.list_data:
                 # Binarize
@@ -245,7 +245,7 @@ class MainController(QObject):
         if val["id"] == 14 and val.get("value,0") ==1:
             function_applied = True
             self.image_processor.edge_lenwid()
-    # Node Radii CSV
+        # Node Radii CSV
         if val["id"] == 15 and val.get("value,0") ==1:
             function_applied = True
             self.image_processor.node_rad()
