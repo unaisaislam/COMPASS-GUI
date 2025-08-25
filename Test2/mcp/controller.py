@@ -3,7 +3,7 @@
 import os
 import cv2
 import numpy as np
-from PyQt6.QtCore import QObject, pyqtSignal, pyqtSlot
+from PyQt6.QtCore import QObject, pyqtSignal, pyqtSlot, QVariant
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from skimage import io, color, filters, morphology, data
@@ -159,11 +159,11 @@ class MainController(QObject):
             # Edge Lengths and Widths CSV
             elif val["id"] == 14 and val.get("value,0") ==1:
                 filter_applied = True
-                self.image_processor.edge_lenwid()
+                # self.image_processor.edge_lenwid()
             # Node Radii CSV
             elif val["id"] == 15 and val.get("value,0") ==1:
                 filter_applied = True
-                self.image_processor.node_rad()
+                # self.image_processor.node_rad()
                 
 
         self.img_cv = img_bin
@@ -172,11 +172,12 @@ class MainController(QObject):
             self.process_image()
 
         self.changeImageSignal.emit()
-        
+    
+            
     @pyqtSlot()
-    def export(self): #combine these with functions, store graph as different variable
+    def export(self): 
         """Retrieve changes made by the user and apply to image/graph."""
-        with PdfPages(f"{self.image_processor.image_path} figures.pdf") as pdf: 
+        with PdfPages("figures.pdf") as pdf: 
             function_applied = False
             for val in self.image_processor.imgFunctionModel.list_data:
                 # Binarize
@@ -240,17 +241,11 @@ class MainController(QObject):
                     self.image_processor.bc_hm()
                     pdf.savefig()
                     plt.close()
-                # # Edge Lengths and Widths CSV
-                # if val["id"] == 14 and val.get("value,0") ==1:
-                #     function_applied = True
-                #     self.image_processor.edge_lenwid()
-                    # edges_df.to_csv(self.output_csv, index=False, float_format="%.2f")
-                #     nodes_df.to_csv(self.output_csv, index=False, float_format="%.2f")
-                # # Node Radii CSV
-                # if val["id"] == 15 and val.get("value,0") ==1:
-                #     function_applied = True
-                #     self.image_processor.node_rad()
-
-            if not function_applied:
-                self.export()
-
+        # Edge Lengths and Widths CSV
+        if val["id"] == 14 and val.get("value,0") ==1:
+            function_applied = True
+            self.image_processor.edge_lenwid()
+    # Node Radii CSV
+        if val["id"] == 15 and val.get("value,0") ==1:
+            function_applied = True
+            self.image_processor.node_rad()
