@@ -178,7 +178,7 @@ class MainController(QObject):
         """Retrieve changes made by the user and apply to image/graph."""
         with PdfPages(f"{self.image_processor.image_path} figures.pdf") as pdf: 
             function_applied = False
-            for val in self.imgFunctionModel.list_data:
+            for val in self.image_processor.imgFunctionModel.list_data:
                 # Binarize
                 if val["id"] == 4 and val.get("value,0") ==1:
                     function_applied = True
@@ -253,3 +253,4 @@ class MainController(QObject):
 
             if not function_applied:
                 self.export()
+
