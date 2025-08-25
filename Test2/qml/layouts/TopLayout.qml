@@ -51,7 +51,7 @@ Item {
             text: "RUN"
             onClicked: {
                 mainController.export()
-                console.log("PDF Exported")
+                console.log("PDFs/CSVs Exported")
             }
         }
     }
