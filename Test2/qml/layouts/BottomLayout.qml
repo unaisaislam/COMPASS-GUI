@@ -4,9 +4,8 @@ import QtQuick.Layouts
 import "../widgets"
 
 Item {
-    // Fallback to avoid Design Studio preview warning
-    height: parent ? parent.height : 640
-    width: parent ? parent.width : 360
+    height: parent.height
+    width: parent.width
 
     ColumnLayout {
         id: progressLayout
@@ -16,15 +15,16 @@ Item {
         Label {
             id: lblError
             text: "No image to display!"
-            color: "#FF0000"
+            font.family: "Sour Gummy"
+            color: "#ffffff"
             visible: true
         }
 
         Rectangle {
             id: imgContainer
-            width: 256
-            height: 256
-            color: "lightgray"
+            width: 650
+            height: 650
+            color: "transparent"
             visible: false
 
             Image {
@@ -34,8 +34,8 @@ Item {
                 // Scale to fit while keeping aspect ratio
                 fillMode: Image.PreserveAspectFit
                 // Prevent overflow
-                width: parent ? parent.width : 256
-                height: parent ? parent.height : 256
+                width: parent.width
+                height: parent.height
                 clip: true
             }
         }
@@ -43,7 +43,9 @@ Item {
         Label {
             id: lblProgress
             Layout.preferredWidth: 100
-            text: "v1.0.0"
+            text: "v1.4.0"
+            font.family: "Sour Gummy"
+            color: "#ffffff"
         }
     }
 
@@ -64,7 +66,6 @@ Item {
                 lblError.visible = true
                 imgContainer.visible = false
             }
-            console.log("Showing: "+ show)
         }
     }
 }
