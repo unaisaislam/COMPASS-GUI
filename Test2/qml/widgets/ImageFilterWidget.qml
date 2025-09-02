@@ -8,7 +8,7 @@ Item {
     Layout.preferredHeight: 256
     Layout.preferredWidth: parent.width
 
-    property int cbxWidthSize: 256
+    property int cbxWidthSize: 400
     property int valueRole: Qt.UserRole + 4
 
 
@@ -17,6 +17,7 @@ Item {
         spacing: 10
 
         Repeater {
+            id: filterRepeater
             model: imgFilterModel
             delegate: RowLayout {
                 Layout.fillWidth: true
@@ -28,6 +29,8 @@ Item {
                     objectName: model.id
                     Layout.preferredWidth: cbxWidthSize
                     text: model.text
+                    font.family: "Spotify Mix"
+                    font.pointSize: 13
                     property bool isChecked: model.value
                     checked: isChecked
                     onCheckedChanged: {
