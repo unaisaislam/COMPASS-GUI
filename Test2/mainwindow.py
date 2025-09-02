@@ -20,14 +20,11 @@ class MainApp(QObject):
         controller = MainController()
         # Register Image Provider
         self.image_provider = ImageProvider(controller)
-        self.image_processors = controller.image_processor
 
         # Set Models/Controllers in QML Context
         self.ui_engine.rootContext().setContextProperty("mainController", controller)
         self.ui_engine.rootContext().setContextProperty("imgFilterModel", controller.imgFilterModel)
         self.ui_engine.addImageProvider("imageProvider", self.image_provider)
-        self.ui_engine.rootContext().setContextProperty("imageProcessor", self.image_processors)
-        self.ui_engine.rootContext().setContextProperty("imgFunctionModel", self.image_processors.imgFunctionModel)
 
         # Load UI
         # Get the directory of the current script
@@ -35,7 +32,6 @@ class MainApp(QObject):
         qml_name = 'qml/MainWindow.qml'
         qml_path = os.path.join(qml_dir, qml_name)
         self.ui_engine.load(qml_path)
-        print("Loading QML from:", qml_path)
         if not self.ui_engine.rootObjects():
             print("Could not start GUI")
             sys.exit(-1)
@@ -45,4 +41,3 @@ if __name__ == "__main__":
     # Start GUI app
     py_app = MainApp()
     sys.exit(py_app.app.exec())
-
