@@ -4,9 +4,8 @@ import QtQuick.Layouts
 import "../widgets"
 
 Item {
-    // Fallback to avoid Design Studio preview warning
-    height: parent ? parent.height : 640
-    width: parent ? parent.width : 360
+    height: parent.height
+    width: parent.width
 
     ColumnLayout {
         id: loginControlLayout
@@ -18,22 +17,28 @@ Item {
             id: lblName
             Layout.preferredWidth: 100
             text: "Add Image"
+            font.family: "Spotify Mix"
+            font.pointSize: 12
+            color: "#ffffff"
         }
 
-        /*TextField {
-            id: txtName
-            Layout.preferredWidth: 100
-            text: ""
-        }*/
 
+        /*TextField {
+                        id: txtName
+                        Layout.preferredWidth: 100
+                        text: ""
+                    }*/
         Button {
             id: btnOK
-            text: "OK"
+            text: "Start!"
+            font.family: "Spotify Mix"
             onClicked: {
+
+
                 /*lblName.text = "Welcome " + txtName.text;
-                var response = mainController.process_name(txtName.text);
-                lblProgress.text = response;
-                console.log(response);*/
+                            var response = mainController.process_name(txtName.text);
+                            lblProgress.text = response;
+                            console.log(response);*/
                 mainController.process_image()
             }
         }
@@ -46,18 +51,11 @@ Item {
         visible: false
 
         ImageFilterWidget {}
-        Button {
-            id: btnRun
-            text: "RUN"
-            onClicked: {
-                mainController.export()
-                console.log("PDFs/CSVs Exported")
-            }
-        }
     }
 
     Connections {
         target: mainController
+
 
         function onImageChangedSignal(show) {
             if (show) {
@@ -67,8 +65,6 @@ Item {
                 loginControlLayout.visible = true
                 filterControlLayout.visible = false
             }
-            console.log("Showing: OKAY"+show)
-
         }
     }
 }
