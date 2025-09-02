@@ -9,6 +9,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 from skimage import io, color, filters, morphology, data
 from scipy.ndimage import convolve
 import networkx
+import io
 import csv
 import pandas as pd
 from skimage.morphology import skeletonize
@@ -46,6 +47,32 @@ class MainController(QObject):
         # use this format for functions
         self.imgFilterModel = CheckBoxModel(dummy_data)
 
+    def plot_to_opencv(self,fig):
+        """Convert a Matplotlib figure to an OpenCV image."""
+        if fig:
+            # Save a figure to a buffer
+            buf = io.BytesIO()
+            fig.savefig(buf, format='png', bbox_inches='tight')
+            buf.seek(0)
+
+            # Convert buffer to NumPy array
+            img_array = np.frombuffer(buf.getvalue(), dtype=np.uint8)
+            buf.close()
+
+            # Decode image including the alpha channel (if any)
+            img_cv_rgba = cv2.imdecode(img_array, cv2.IMREAD_UNCHANGED)
+
+            # Convert RGBA to RGB if needed
+            if img_cv_rgba.shape[2] == 4:
+                img_cv_rgb = cv2.cvtColor(img_cv_rgba, cv2.COLOR_RGBA2RGB)
+            else:
+                img_cv_rgb = img_cv_rgba
+
+            # Convert RGB to BGR to match OpenCV color space
+            img_cv_bgr = cv2.cvtColor(img_cv_rgb, cv2.COLOR_RGB2BGR)
+            return img_cv_bgr
+        return None
+    # use this then update self.image_cv 
     @pyqtSlot()
     def process_image(self):
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -123,44 +150,57 @@ class MainController(QObject):
                 binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
                 binary = binary // 255
                 skeleton = skeletonize(binary)
-
+                
                 h, w = skeleton.shape
-                graph = networkx.Graph()
-                pixel_to_node = {}
+                adj_list = {}
 
+                graph = networkx.Graph()
+                graph.add_nodes_from(adj_list.keys())
+                
+                            
+                def add_edge(g, a, b):
+                    g.setdefault(a,[]).append(b)
+                    g.setdefault(b,[]).append(a)
+                    
                 for y in range(h):
                     for x in range(w):
-                        if skeleton[y, x]:
-                            node_id = len(pixel_to_node)
-                            pixel_to_node[(x, y)] = node_id
-                            graph.add_node(node_id)
-
-                for (x, y), node_id in pixel_to_node.items():
-                    for dx in [-1, 0, 1]:
+                        if not skeleton[y, x]:
+                            continue
                         for dy in [-1, 0, 1]:
-                            if dx == 0 and dy == 0:
-                                continue
-                            nx_, ny_ = x + dx, y + dy
-                            if (nx_, ny_) in pixel_to_node:
-                                graph.add_edge(node_id, pixel_to_node[(nx_, ny_)])
+                            for dx in [-1, 0, 1]:
+                                if dy == 0 and dx == 0:
+                                    continue
+                                ny, nx = y + dy, x + dx
+                                if 0 <= ny < h and 0 <= nx < w and skeleton[ny, nx]:
+                                    add_edge(adj_list, (y, x), (ny, nx))
+                                    
+                for u, neighbors in adj_list.items():
+                    for v in neighbors:
+                        if not graph.has_edge(u, v):
+                            graph.add_edge(u, v)
 
                 components = list(networkx.connected_components(graph))
-                component_dict = {node: i for i, comp in enumerate(components) for node in comp}
-                node_colors = [component_dict[node] for node in graph.nodes()]
-                positions = {node: (x * 2, y * 2) for (x, y), node in pixel_to_node.items()}
+                number_of_components = len(components)
 
-                self.graph_data = {
-                    "graph": graph,
-                    "positions": positions,
-                    "colors": node_colors,
-                    "num_components": len(components)
-                }
+                component_index = {node: i for i, component in enumerate(components) for node in component}
+                color_list = [component_index[node] for node in graph.nodes()]
+                position = {(y,x): (x, -y) for y, x in graph.nodes()}
+                
+                fig, ax = plt.subplots(figsize=(8,8), dpi=100)
+                networkx.draw(
+                    graph,
+                    pos = position,
+                    node_color=color_list,
+                    node_size=5,
+                    cmap=plt.cm.get_cmap('magma', number_of_components),
+                    with_labels=False,
+                    edge_color='lightgray',
+                    ax=ax
+                )
+                ax.axis('off')
+                img_bin = self.plot_to_opencv(fig)  
+                plt.close(fig)
 
-                # Overlay graph on image
-                gray = cv2.cvtColor(img_bin, cv2.COLOR_BGR2GRAY) if len(img_bin.shape) == 3 else img_bin
-                overlay = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)  # Convert to 3-channel for color drawing
-                # ASK FOR HELP HERE 
-                img_bin = overlay
             # Edge-Node Skeletonize
             elif val["id"] == 6 and val.get("value", 0) == 1:
                 filter_applied = True
@@ -232,11 +272,99 @@ class MainController(QObject):
             # Degree Heatmap
             elif val["id"] == 7 and val.get("value", 0) == 1:
                     filter_applied = True
-                    # ASK
+                    gray = cv2.cvtColor(img_bin, cv2.COLOR_BGR2GRAY) if len(img_bin.shape) == 3 else img_bin
+                    gray = gray.astype("float32") / 255.0
+                    threshold = filters.threshold_otsu(gray)
+                    binary = gray < threshold
+                    skeleton = morphology.skeletonize(binary)
+                    h, w = skeleton.shape
+                    adj_list = {}
+                    graph = networkx.Graph()
+                    graph.add_nodes_from(adj_list.keys())        
+                    def add_edge(g, a, b):
+                        g.setdefault(a,[]).append(b)
+                        g.setdefault(b,[]).append(a)
+                        
+                    for y in range(h):
+                        for x in range(w):
+                            if not skeleton[y, x]:
+                                continue
+                            for dy in [-1, 0, 1]:
+                                for dx in [-1, 0, 1]:
+                                    if dy == 0 and dx == 0:
+                                        continue
+                                    ny, nx = y + dy, x + dx
+                                    if 0 <= ny < h and 0 <= nx < w and skeleton[ny, nx]:
+                                        add_edge(adj_list, (y, x), (ny, nx))
+                                        
+                    for u, neighbors in adj_list.items():
+                        for v in neighbors:
+                            if not graph.has_edge(u, v):
+                                graph.add_edge(u, v)
+                                
+                    degmap = np.zeros(skeleton.shape,dtype=float)
+                    for (y,x), deg in graph.degree():
+                        degmap[y,x] = deg
+                        
+                    fig, ax = plt.subplots(dpi=100)
+                    cbar = fig.colorbar(plt.cm.ScalarMappable(cmap='magma'), ax=ax, orientation='vertical')
+                    cbar.set_label('Pixel Degree', rotation=270, labelpad=15)
+                    ax.imshow(gray, cmap='gray')
+                    ax.imshow(degmap, cmap='magma', alpha=0.5)
+                    ax.axis('off')
+                    plt.tight_layout()
+                    img_bin = self.plot_to_opencv(fig)  
+                    plt.close(fig)
             # Betweenness Centrality Heatmap
             elif val["id"] == 8 and val.get("value", 0) == 1:
                     filter_applied = True
-                    # ASK
+                    gray = cv2.cvtColor(img_bin, cv2.COLOR_BGR2GRAY) if len(img_bin.shape) == 3 else img_bin
+                    gray = gray.astype("float32") / 255.0
+                    threshold = filters.threshold_otsu(gray)
+                    binary = gray < threshold
+                    skeleton = morphology.skeletonize(binary)
+                    h, w = skeleton.shape
+                    adj_list = {}
+                        
+                    def add_edge(g, a, b):
+                        g.setdefault(a,[]).append(b)
+                        g.setdefault(b,[]).append(a)
+                        
+                    for y in range(h):
+                        for x in range(w):
+                            if not skeleton[y, x]:
+                                continue
+                            for dy in [-1, 0, 1]:
+                                for dx in [-1, 0, 1]:
+                                    if dy == 0 and dx == 0:
+                                        continue
+                                    ny, nx = y + dy, x + dx
+                                    if 0 <= ny < h and 0 <= nx < w and skeleton[ny, nx]:
+                                        add_edge(adj_list, (y, x), (ny, nx))
+                                        
+                    graph = networkx.Graph()
+                    graph.add_nodes_from(adj_list.keys())
+                    
+                    for u, neighbors in adj_list.items():
+                        for v in neighbors:
+                            if not graph.has_edge(u, v):
+                                graph.add_edge(u, v)
+                                
+                    bc_dict = networkx.betweenness_centrality(graph)
+                    bc_map = np.zeros(skeleton.shape, dtype=float)
+                    
+                    for (y,x), score in bc_dict.items():
+                        bc_map[y,x] = score
+                        
+                    fig, ax = plt.subplots(dpi=100)
+                    cbar = fig.colorbar(plt.cm.ScalarMappable(cmap='magma'), ax=ax, orientation='vertical')
+                    cbar.set_label('Betweenness Centrality', rotation=270, labelpad=15)
+                    ax.imshow(gray, cmap='gray')
+                    ax.imshow(bc_map, cmap='magma', alpha=0.5)
+                    ax.axis('off')
+                    plt.tight_layout()
+                    img_bin = self.plot_to_opencv(fig)  
+                    plt.close(fig)
 
         self.img_cv = img_bin
         if not filter_applied:
