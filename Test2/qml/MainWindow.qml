@@ -5,11 +5,16 @@ import "layouts"
 
 ApplicationWindow {
     id: mainWindow
-    width: 1024
-    height: 800
+    //width: 1024
+   // height: 800
     visible: true
-    title: "GUI Tutorial"
+    title: "Spindle.exe"
+    visibility: Window.FullScreen
 
+    Image{
+        anchors.fill:parent
+        source: "bg5.jpg"
+    }
 
     /*Component.onCompleted: {
         console.log("Checking controller:", mainController);
@@ -26,10 +31,10 @@ ApplicationWindow {
         Rectangle {
             Layout.row: 0
             Layout.column: 0
-            Layout.columnSpan: 2
+            Layout.rowSpan: 2
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-            width: 956
-            height: 384
+            width: 200
+            height:  956
             color: "transparent"
 
             TopLayout {}
@@ -37,12 +42,12 @@ ApplicationWindow {
 
         // Second row, first column (spanning 2 columns)
         Rectangle {
-            Layout.row: 1
-            Layout.column: 0
-            Layout.columnSpan: 2
+            Layout.column: 1
+            Layout.row: 0
+            Layout.rowSpan: 2
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-            width: 956
-            height: 384
+            width:  500
+            height: 956
             color: "transparent"
             BottomLayout{}
         }
