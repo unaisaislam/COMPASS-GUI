@@ -14,7 +14,7 @@ Item {
 
         Label {
             id: lblError
-            text: "No image to display!"
+            text: "No image to display yet!"
             font.family: "Sour Gummy"
             color: "#ffffff"
             visible: true
