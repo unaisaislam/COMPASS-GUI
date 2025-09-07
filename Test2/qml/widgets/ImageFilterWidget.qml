@@ -30,7 +30,16 @@ Item {
                     Layout.preferredWidth: cbxWidthSize
                     text: model.text
                     font.family: "Spotify Mix"
-                    font.pointSize: 13
+                    font.pointSize: 14
+
+                    contentItem: Text {
+                        text: checkBox.text
+                        font: checkBox.font
+                        color: "white"
+                        verticalAlignment: Text.AlignVCenter
+                        leftPadding: checkBox.indicator.width + 4
+                    }
+
                     property bool isChecked: model.value
                     checked: isChecked
                     onCheckedChanged: {
