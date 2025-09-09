@@ -33,6 +33,7 @@ class MainController(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.img_cv = None
+        self.img_pix = None
         # self.image_processor = ImageProcessor("","")
         self.selected_functions = set()
         dummy_data = [
@@ -85,6 +86,7 @@ class MainController(QObject):
             self.updateProgress.emit(-1, "Could not read image")
             return
 
+        self.img_pix = self.img_cv.copy()
         self.updateProgress.emit(100, "Image added!")
         self.changeImageSignal.emit()
 
@@ -373,8 +375,7 @@ class MainController(QObject):
                     img_bin = self.plot_to_opencv(fig)  
                     plt.close(fig)
                         
-    
-        self.img_cv = img_bin
+        self.img_pix = img_bin
 
         if not filter_applied:
             self.changeImageSignal.emit()
@@ -384,6 +385,6 @@ class MainController(QObject):
         self.changeImageSignal.emit()
         self.updateProgress.emit(100, "Filter applied")
 
-        if self.img_cv is None:
+        if self.img_pix is None:
             self.updateProgress.emit(-1, "No image loaded to apply filter")
             return
