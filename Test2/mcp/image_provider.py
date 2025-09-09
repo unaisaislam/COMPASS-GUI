@@ -13,9 +13,10 @@ class ImageProvider(QQuickImageProvider):
 
     def change_image(self):
         # Create Pixmap image
-        img = Image.fromarray(self.img_controller.img_cv)
+        img = Image.fromarray(self.img_controller.img_pix)
         self.pixmap = ImageQt.toqpixmap(img)
         self.img_controller.imageChangedSignal.emit(True)
 
     def requestPixmap(self, img_id, requested_size):
         return self.pixmap, self.pixmap.size()
+
